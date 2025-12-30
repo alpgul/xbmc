@@ -1,0 +1,8 @@
+LIBNAME=c-ares
+BASE_URL=https://github.com/c-ares/c-ares
+VERSION=1.30.0
+FULL_URL=$(BASE_URL)/releases/download/v$(VERSION)/c-ares-$(VERSION).tar.gz
+SHA512=427f2acd34f40464972af0baa5ff547f41e64495c4871b74a9b572d8ac3cecba08c7cd79dad4702307dee25b58963cabef90123601e033d4fd4e9ee530afc2f3
+ARCHIVE=c-ares-$(VERSION).tar.gz
+BYPRODUCT=libcares.a
+BYPRODUCT_WIN=cares.lib

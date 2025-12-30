@@ -1,0 +1,8 @@
+LIBNAME=boringssl
+BASE_URL=https://github.com/google/boringssl
+VERSION=673e61fc215b178a90c0e67858bbf162c8158993
+FULL_URL=$(BASE_URL)/archive/$(VERSION).tar.gz
+SHA512=52a40decfbe136812f7149382480de4651ea69d83dbc5b9f4427afe323851d432ac962886b2eccc029bdce69f917464fbf0a240c82960b6294e6c6cea1f813e8
+ARCHIVE=boringssl-$(VERSION).tar.gz
+BYPRODUCT=libssl.a
+BYPRODUCT_WIN=ssl.lib

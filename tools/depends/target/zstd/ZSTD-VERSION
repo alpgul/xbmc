@@ -1,0 +1,7 @@
+LIBNAME=libzstd
+BASE_URL=https://github.com/facebook/zstd
+VERSION=1.5.6
+FULL_URL=$(BASE_URL)/releases/download/v$(VERSION)/zstd-$(VERSION).tar.gz
+ARCHIVE=zstd-$(VERSION).tar.gz
+BYPRODUCT=libzstd.a
+BYPRODUCT_WIN=zstd.lib
