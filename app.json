@@ -1,0 +1,41 @@
+{
+  "paging": {
+    "page": 1,
+    "count": 1,
+    "maxPage": 1,
+    "itemsTotal": 1
+  },
+  "packages": [
+    {
+      "id": "org.xbmc.kodi",
+      "title": "Kodi",
+      "iconUri": "https://repo.webosbrew.org/apps/icons/org.xbmc.kodi.png",
+      "manifestUrl": "/api/apps/org.xbmc.kodi/manifests/Omega.json",
+      "manifest": {
+        "id": "org.xbmc.kodi",
+        "title": "Kodi",
+        "version": "Omega",
+        "type": "native",
+        "appDescription": null,
+        "iconUri": "https://repo.webosbrew.org/apps/icons/org.xbmc.kodi.png",
+        "sourceUrl": "https://github.com/xbmc/xbmc",
+        "ipkUrl": "https://github.com/alpgul/xbmc/releases/download/webos-Omega-20260206-222826/org.xbmc.kodi_21.3.0_arm.ipk",
+        "ipkHash": {
+          "sha256": "d56b524faf0a6f10a468a0ebfe44d76f8e903fdcac452f45749dd6323eb5f67b"
+        },
+        "ipkSize": 108166468,
+        "installedSize": 0
+      },
+      "pool": "main",
+      "detailIconUri": "https://raw.githubusercontent.com/xbmc/xbmc/master/media/icon256x256.png",
+      "requirements": {
+        "webosRelease": ">=4.0",
+        "deviceSoC": [
+          "!k5lp"
+        ]
+      },
+      "shortDescription": null,
+      "fullDescriptionUrl": "apps/org.xbmc.kodi/full_description.html"
+    }
+  ]
+}
