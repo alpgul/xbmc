@@ -250,7 +250,8 @@ jobs:
 
           echo "ipk_path=release/${IPK_BASENAME}" >> "$GITHUB_OUTPUT"
 
-      - name: Commit app.json to active branch
+      - name: Commit app.json to active branch (skip Omega)
+        if: github.ref_name != 'Omega'
         shell: bash
         run: |
           set -euo pipefail
@@ -259,7 +260,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add app.json
           git commit -m "Update app.json for Kodi WebOS ${{ steps.meta.outputs.kodi_ref }}" || echo "No app.json changes to commit"
-          git push
+          git push origin "HEAD:${GITHUB_REF_NAME}"
 
       - name: Publish GitHub release with IPK and addons
         uses: softprops/action-gh-release@v2
