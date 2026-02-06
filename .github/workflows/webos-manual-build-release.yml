@@ -64,6 +64,7 @@ jobs:
 
 
       - name: Restore depends tarballs cache
+        if: ${{ !inputs.validate_only }}
         uses: actions/cache@v4
         with:
           path: ${{ env.TARBALLS_DIR }}
@@ -72,6 +73,7 @@ jobs:
             webos-tarballs-${{ inputs.kodi_branch }}-
 
       - name: Restore ccache
+        if: ${{ !inputs.validate_only }}
         uses: actions/cache@v4
         with:
           path: ${{ env.CCACHE_DIR }}
@@ -80,12 +82,14 @@ jobs:
             webos-ccache-${{ inputs.kodi_branch }}-
 
       - name: Download webOS toolchain
+        if: ${{ !inputs.validate_only }}
         run: |
           mkdir -p "$TOOLCHAIN_DIR"
           curl -fL "${{ inputs.toolchain_url }}" -o "$TOOLCHAIN_DIR/toolchain.tar.gz"
           tar -xzf "$TOOLCHAIN_DIR/toolchain.tar.gz" -C "$TOOLCHAIN_DIR"
 
       - name: Build depends
+        if: ${{ !inputs.validate_only }}
         run: |
           set -euo pipefail
           mkdir -p "$TARBALLS_DIR" "$CCACHE_DIR"
@@ -123,7 +127,7 @@ jobs:
           fi
 
       - name: Collect depends diagnostics on failure
-        if: ${{ failure() }}
+        if: ${{ !inputs.validate_only && failure() }}
         run: |
           set -euo pipefail
           DIAG_DIR="$RUNNER_TEMP/depends-diagnostics"
@@ -142,7 +146,7 @@ jobs:
           fi
 
       - name: Upload depends diagnostics artifact
-        if: ${{ always() }}
+        if: ${{ !inputs.validate_only && always() }}
         uses: actions/upload-artifact@v4
         with:
           name: depends-diagnostics-${{ github.run_number }}
@@ -151,20 +155,13 @@ jobs:
             ${{ runner.temp }}/depends-diagnostics/filesystem-snapshot.txt
           if-no-files-found: ignore
 
-      - name: Validate native cmake target only (fast mode)
+      - name: Stop after package validation (fast mode)
         if: ${{ inputs.validate_only }}
         run: |
-          set -euo pipefail
-          cd tools/depends
-          make -j1 -C native/cmake
-
-      - name: Stop after validation (fast mode)
-        if: ${{ inputs.validate_only }}
-        run: |
-          echo "validate_only=true -> Skipping Kodi build, ipk packaging and release upload."
+          echo "validate_only=true -> Ran dependency package/prerequisite checks only; skipped cache, toolchain download, depends and all build/release steps."
 
       - name: Show ccache statistics
-        if: always()
+        if: ${{ !inputs.validate_only && always() }}
         run: ccache --show-stats || true
 
       - name: Generate CMake build system
