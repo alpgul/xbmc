@@ -136,6 +136,15 @@ jobs:
             ${{ github.workspace }}/kodi-dev
           key: ${{ runner.os }}-kodi-${{ steps.meta.outputs.kodi_ref }}-v2
 
+      - name: Generate Kodi project files for WebOS
+        working-directory: ${{ github.workspace }}/kodi
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -C tools/depends/target/cmakebuildsys \
+            BUILD_DIR="${{ github.workspace }}/kodi/build" \
+            CMAKE_EXTRA_ARGUMENTS="-DCORE_PLATFORM_NAME=webos"
+
       - name: Build all binary addons for WebOS
         working-directory: ${{ github.workspace }}/kodi
         shell: bash
@@ -143,21 +152,22 @@ jobs:
           set -euo pipefail
           make -j"$(getconf _NPROCESSORS_ONLN)" \
             -C tools/depends/target/binary-addons \
-            ADDONS="all" \
-            ADDON_SRC_PREFIX="${{ github.workspace }}"
+            PREFIX="${{ github.workspace }}/kodi/build/tools/webOS/packaging" \
+            ADDONS="all"
 
-      - name: Build Kodi package (IPK)
-        working-directory: ${{ github.workspace }}/kodi
+      - name: Build Kodi binary
+        working-directory: ${{ github.workspace }}/kodi/build
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p build
-          cmake -S . -B build -G Ninja \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCORE_PLATFORM_NAME=webos \
-            -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/kodi/tools/depends/target/Toolchain.cmake" \
-            -DDEPENDS_PATH="${{ github.workspace }}/kodi-deps"
-          cmake --build build --target package -j"$(getconf _NPROCESSORS_ONLN)"
+          make -j"$(getconf _NPROCESSORS_ONLN)"
+
+      - name: Build Kodi package (IPK)
+        working-directory: ${{ github.workspace }}/kodi/build
+        shell: bash
+        run: |
+          set -euo pipefail
+          make ipk
 
       - name: Collect release artifacts
         id: artifacts
