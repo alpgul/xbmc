@@ -103,10 +103,11 @@ jobs:
               --host=arm-webos-linux-gnueabi \
               --with-toolchain="$TOOLCHAIN_DIR/$TOOLCHAIN_NAME" \
               --with-tarballs="$TARBALLS_DIR" \
-              --enable-debug=no
+              --disable-debug
           }
 
           cd tools/depends
+          git clean -f -xfd .
           ./bootstrap
           configure_depends
 
