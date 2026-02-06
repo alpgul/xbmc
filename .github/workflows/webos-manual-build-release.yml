@@ -1,0 +1,187 @@
+name: Manual webOS Build and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      kodi_branch:
+        description: "Kodi branch/ref to build"
+        required: true
+        default: "Omega"
+      toolchain_url:
+        description: "Download URL for arm-webos-linux-gnueabi SDK buildroot tar.gz"
+        required: true
+        default: "https://github.com/openlgtv/buildroot-nc4/releases/download/webos-a38c582/arm-webos-linux-gnueabi_sdk-buildroot-x86_64.tar.gz"
+      release_tag:
+        description: "Release tag name (leave empty for auto-generated tag)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  build-webos:
+    runs-on: ubuntu-22.04
+    env:
+      BUILD_DIR: ${{ github.workspace }}/build
+      DEPS_PREFIX: ${{ github.workspace }}/kodi-deps
+      TOOLCHAIN_DIR: ${{ github.workspace }}/kodi-dev
+      TOOLCHAIN_NAME: arm-webos-linux-gnueabi_sdk-buildroot
+      APP_ID: org.xbmc.kodi
+      TARBALLS_DIR: ${{ github.workspace }}/.cache/xbmc-tarballs
+      CCACHE_DIR: ${{ github.workspace }}/.cache/ccache
+    steps:
+      - name: Checkout selected branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.kodi_branch }}
+          fetch-depth: 0
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            autoconf automake autopoint bison build-essential cmake curl flex gawk gettext \
+            ccache git gperf jq libtool ninja-build patch pkg-config python3 unzip zip
+
+
+      - name: Restore depends tarballs cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.TARBALLS_DIR }}
+          key: webos-tarballs-${{ inputs.kodi_branch }}-${{ hashFiles('tools/depends/**') }}
+          restore-keys: |
+            webos-tarballs-${{ inputs.kodi_branch }}-
+
+      - name: Restore ccache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: webos-ccache-${{ inputs.kodi_branch }}-${{ hashFiles('CMakeLists.txt', 'cmake/**', 'xbmc/**', 'tools/depends/**') }}
+          restore-keys: |
+            webos-ccache-${{ inputs.kodi_branch }}-
+
+      - name: Download webOS toolchain
+        run: |
+          mkdir -p "$TOOLCHAIN_DIR"
+          curl -fL "${{ inputs.toolchain_url }}" -o "$TOOLCHAIN_DIR/toolchain.tar.gz"
+          tar -xzf "$TOOLCHAIN_DIR/toolchain.tar.gz" -C "$TOOLCHAIN_DIR"
+
+      - name: Build depends
+        run: |
+          mkdir -p "$TARBALLS_DIR" "$CCACHE_DIR"
+          ccache --zero-stats || true
+          cd tools/depends
+          ./bootstrap
+          ./configure \
+            --prefix="$DEPS_PREFIX" \
+            --host=arm-webos-linux-gnueabi \
+            --with-toolchain="$TOOLCHAIN_DIR/$TOOLCHAIN_NAME" \
+            --with-tarballs="$TARBALLS_DIR" \
+            --enable-debug=no
+          make -j"$(nproc)"
+
+      - name: Show ccache statistics
+        if: always()
+        run: ccache --show-stats || true
+
+      - name: Generate CMake build system
+        run: |
+          make -C tools/depends/target/cmakebuildsys \
+            BUILD_DIR="$BUILD_DIR" \
+            CMAKE_EXTRA_ARGUMENTS="-DCORE_PLATFORM_NAME=webos"
+
+      - name: Build all binary addons
+        run: |
+          make -j"$(nproc)" -C tools/depends/target/binary-addons \
+            PREFIX="$BUILD_DIR/tools/webOS/packaging"
+
+      - name: Build Kodi and IPK
+        run: |
+          make -C "$BUILD_DIR" -j"$(nproc)"
+          make -C "$BUILD_DIR" ipk
+
+      - name: Collect artifacts and metadata
+        id: meta
+        run: |
+          set -euo pipefail
+          IPK_PATH="$(find "$BUILD_DIR" -maxdepth 2 -type f -name '*.ipk' | head -n1)"
+          if [ -z "$IPK_PATH" ]; then
+            echo "No .ipk artifact produced" >&2
+            exit 1
+          fi
+
+          IPK_FILE="$(basename "$IPK_PATH")"
+          APP_VERSION="$(echo "$IPK_FILE" | sed -E 's/^org\.xbmc\.kodi[_-]([0-9][^_]*)_.*/\1/')"
+          if [ -z "$APP_VERSION" ] || [ "$APP_VERSION" = "$IPK_FILE" ]; then
+            APP_VERSION="${{ github.run_number }}"
+          fi
+
+          RELEASE_TAG="${{ inputs.release_tag }}"
+          if [ -z "$RELEASE_TAG" ]; then
+            RELEASE_TAG="webos-${{ inputs.kodi_branch }}-${{ github.run_number }}"
+          fi
+
+          SHA256="$(sha256sum "$IPK_PATH" | awk '{print $1}')"
+          IPK_SIZE="$(stat -c '%s' "$IPK_PATH")"
+          BASE_RELEASE_URL="https://github.com/${{ github.repository }}/releases/download/$RELEASE_TAG"
+          IPK_URL="$BASE_RELEASE_URL/$IPK_FILE"
+          APP_JSON_PATH="$RUNNER_TEMP/app.json"
+
+          jq -n \
+            --arg app_id "$APP_ID" \
+            --arg version "$APP_VERSION" \
+            --arg branch "${{ inputs.kodi_branch }}" \
+            --arg icon_uri "https://raw.githubusercontent.com/${{ github.repository }}/${{ inputs.kodi_branch }}/media/icon256x256.png" \
+            --arg source_url "https://github.com/${{ github.repository }}" \
+            --arg ipk_url "$IPK_URL" \
+            --arg sha256 "$SHA256" \
+            --argjson ipk_size "$IPK_SIZE" \
+            '{
+              paging: { page: 1, count: 1, maxPage: 1, itemsTotal: 1 },
+              packages: [
+                {
+                  id: $app_id,
+                  title: "Kodi",
+                  iconUri: $icon_uri,
+                  manifestUrl: ("/api/apps/" + $app_id + "/manifests/" + $version + ".json"),
+                  manifest: {
+                    id: $app_id,
+                    title: "Kodi",
+                    version: $version,
+                    type: "native",
+                    appDescription: null,
+                    iconUri: $icon_uri,
+                    sourceUrl: $source_url,
+                    ipkUrl: $ipk_url,
+                    ipkHash: { sha256: $sha256 },
+                    ipkSize: $ipk_size,
+                    installedSize: $ipk_size
+                  },
+                  pool: "main",
+                  detailIconUri: $icon_uri,
+                  requirements: {
+                    webosRelease: ">=4.0",
+                    deviceSoC: ["!k5lp"]
+                  },
+                  shortDescription: null,
+                  fullDescriptionUrl: ("apps/" + $app_id + "/full_description.html")
+                }
+              ]
+            }' > "$APP_JSON_PATH"
+
+          echo "ipk_path=$IPK_PATH" >> "$GITHUB_OUTPUT"
+          echo "ipk_file=$IPK_FILE" >> "$GITHUB_OUTPUT"
+          echo "app_json_path=$APP_JSON_PATH" >> "$GITHUB_OUTPUT"
+          echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release and upload artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.release_tag }}
+          name: webOS build ${{ steps.meta.outputs.release_tag }}
+          files: |
+            ${{ steps.meta.outputs.ipk_path }}
+            ${{ steps.meta.outputs.app_json_path }}
+          generate_release_notes: true
