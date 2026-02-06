@@ -73,18 +73,33 @@ jobs:
           set -euo pipefail
           mkdir -p "$TARBALLS_DIR" "$CCACHE_DIR"
           ccache --zero-stats || true
+
+          configure_depends() {
+            ./configure \
+              --prefix="$DEPS_PREFIX" \
+              --host=arm-webos-linux-gnueabi \
+              --with-toolchain="$TOOLCHAIN_DIR/$TOOLCHAIN_NAME" \
+              --with-tarballs="$TARBALLS_DIR" \
+              --enable-debug=no
+          }
+
           cd tools/depends
           ./bootstrap
-          ./configure \
-            --prefix="$DEPS_PREFIX" \
-            --host=arm-webos-linux-gnueabi \
-            --with-toolchain="$TOOLCHAIN_DIR/$TOOLCHAIN_NAME" \
-            --with-tarballs="$TARBALLS_DIR" \
-            --enable-debug=no
+          configure_depends
 
           if ! make -j"$(nproc)"; then
-            echo "Parallel depends build failed. Retrying python3 native target and full depends build serially..."
+            echo "Parallel depends build failed. Cleaning native python3/cmake state and retrying serially..."
             make -C native/python3 distclean || true
+            make -C native/cmake distclean || true
+            rm -rf native/cmake/x86_64-linux-native || true
+            make -j1
+          fi
+
+          if ! test -x native/cmake/x86_64-linux-native/bin/cmake; then
+            echo "Native cmake was not generated correctly. Rebuilding depends from clean state..."
+            make distclean || true
+            ./bootstrap
+            configure_depends
             make -j1
           fi
 
