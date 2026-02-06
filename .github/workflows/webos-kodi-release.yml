@@ -1,0 +1,242 @@
+name: Build Kodi WebOS (Omega)
+
+on:
+  workflow_dispatch:
+    inputs:
+      kodi_ref:
+        description: "Kodi ref/branch to build"
+        required: true
+        default: "Omega"
+        type: string
+      release_tag:
+        description: "Release tag (leave empty to auto-generate)"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  TOOLCHAIN_URL: https://github.com/openlgtv/buildroot-nc4/releases/download/webos-b17b4cc/arm-webos-linux-gnueabi_sdk-buildroot.tar.gz
+  TOOLCHAIN_DIR: arm-webos-linux-gnueabi_sdk-buildroot
+  HOST_TRIPLE: arm-webos-linux-gnueabi
+
+jobs:
+  build:
+    name: Build Kodi + all binary addons and publish release
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout this repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Resolve release metadata
+        id: meta
+        shell: bash
+        run: |
+          set -euo pipefail
+          KODI_REF="${{ github.event.inputs.kodi_ref }}"
+          TAG_INPUT="${{ github.event.inputs.release_tag }}"
+          if [ -n "${TAG_INPUT}" ]; then
+            RELEASE_TAG="${TAG_INPUT}"
+          else
+            RELEASE_TAG="webos-${KODI_REF}-$(date -u +'%Y%m%d-%H%M%S')"
+          fi
+
+          echo "kodi_ref=${KODI_REF}" >> "$GITHUB_OUTPUT"
+          echo "release_tag=${RELEASE_TAG}" >> "$GITHUB_OUTPUT"
+          echo "release_name=Kodi WebOS ${KODI_REF}" >> "$GITHUB_OUTPUT"
+
+      - name: Install Ubuntu build dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y \
+            autoconf \
+            automake \
+            build-essential \
+            cmake \
+            curl \
+            gawk \
+            git \
+            libssl-dev \
+            libtool \
+            ninja-build \
+            pkg-config \
+            python3 \
+            python3-pip \
+            rsync \
+            unzip \
+            wget \
+            zip
+
+      - name: Restore cached Kodi prerequisites
+        id: cache-kodi
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ${{ github.workspace }}/kodi
+            ${{ github.workspace }}/kodi-deps
+            ${{ github.workspace }}/kodi-dev
+          key: ${{ runner.os }}-kodi-${{ steps.meta.outputs.kodi_ref }}-v2
+
+      - name: Download and unpack WebOS toolchain
+        if: steps.cache-kodi.outputs.cache-hit != 'true'
+        working-directory: ${{ github.workspace }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p kodi-dev
+          cd kodi-dev
+          wget -nv "${TOOLCHAIN_URL}"
+          tar xzf arm-webos-linux-gnueabi_sdk-buildroot.tar.gz
+
+      - name: Checkout Kodi repository
+        if: steps.cache-kodi.outputs.cache-hit != 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: alpgul/xbmc
+          ref: ${{ steps.meta.outputs.kodi_ref }}
+          path: kodi
+          fetch-depth: 1
+
+      - name: Configure Kodi depends
+        if: steps.cache-kodi.outputs.cache-hit != 'true'
+        working-directory: ${{ github.workspace }}/kodi/tools/depends
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./bootstrap
+          ./configure \
+            --prefix="${{ github.workspace }}/kodi-deps" \
+            --host="${HOST_TRIPLE}" \
+            --with-toolchain="${{ github.workspace }}/kodi-dev/${{ env.TOOLCHAIN_DIR }}" \
+            --enable-debug=no
+
+      - name: Build Kodi depends
+        if: steps.cache-kodi.outputs.cache-hit != 'true'
+        working-directory: ${{ github.workspace }}/kodi/tools/depends
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -j"$(getconf _NPROCESSORS_ONLN)"
+
+      - name: Save Kodi prerequisites cache
+        if: steps.cache-kodi.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ${{ github.workspace }}/kodi
+            ${{ github.workspace }}/kodi-deps
+            ${{ github.workspace }}/kodi-dev
+          key: ${{ runner.os }}-kodi-${{ steps.meta.outputs.kodi_ref }}-v2
+
+      - name: Build all binary addons for WebOS
+        working-directory: ${{ github.workspace }}/kodi
+        shell: bash
+        run: |
+          set -euo pipefail
+          make -j"$(getconf _NPROCESSORS_ONLN)" \
+            -C tools/depends/target/binary-addons \
+            ADDONS="all" \
+            ADDON_SRC_PREFIX="${{ github.workspace }}"
+
+      - name: Build Kodi package (IPK)
+        working-directory: ${{ github.workspace }}/kodi
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCORE_PLATFORM_NAME=webos \
+            -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/kodi/tools/depends/target/Toolchain.cmake" \
+            -DDEPENDS_PATH="${{ github.workspace }}/kodi-deps"
+          cmake --build build --target package -j"$(getconf _NPROCESSORS_ONLN)"
+
+      - name: Collect release artifacts
+        id: artifacts
+        shell: bash
+        working-directory: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          mkdir -p release
+
+          mapfile -t IPKS < <(find kodi/build -maxdepth 3 -type f -name '*.ipk' | sort)
+          if [ "${#IPKS[@]}" -eq 0 ]; then
+            echo "IPK output not found." >&2
+            exit 1
+          fi
+
+          IPK_PATH="${IPKS[0]}"
+          cp "${IPK_PATH}" release/
+          IPK_BASENAME="$(basename "${IPK_PATH}")"
+          IPK_SHA256="$(sha256sum "release/${IPK_BASENAME}" | awk '{print $1}')"
+          IPK_SIZE="$(stat -c '%s' "release/${IPK_BASENAME}")"
+
+          if [ -d "kodi-deps/${HOST_TRIPLE}-release/addons" ]; then
+            tar -C "kodi-deps/${HOST_TRIPLE}-release" -czf "release/kodi-webos-addons-${{ steps.meta.outputs.kodi_ref }}.tar.gz" addons
+          fi
+
+          RELEASE_DOWNLOAD_URL="https://github.com/${{ github.repository }}/releases/download/${{ steps.meta.outputs.release_tag }}/${IPK_BASENAME}"
+
+          cat > release/app.json <<JSON
+          {
+            "paging": {
+              "page": 1,
+              "count": 1,
+              "maxPage": 1,
+              "itemsTotal": 1
+            },
+            "packages": [
+              {
+                "id": "org.xbmc.kodi",
+                "title": "Kodi",
+                "iconUri": "https://repo.webosbrew.org/apps/icons/org.xbmc.kodi.png",
+                "manifestUrl": "/api/apps/org.xbmc.kodi/manifests/${{ steps.meta.outputs.kodi_ref }}.json",
+                "manifest": {
+                  "id": "org.xbmc.kodi",
+                  "title": "Kodi",
+                  "version": "${{ steps.meta.outputs.kodi_ref }}",
+                  "type": "native",
+                  "appDescription": null,
+                  "iconUri": "https://repo.webosbrew.org/apps/icons/org.xbmc.kodi.png",
+                  "sourceUrl": "https://github.com/xbmc/xbmc",
+                  "ipkUrl": "${RELEASE_DOWNLOAD_URL}",
+                  "ipkHash": {
+                    "sha256": "${IPK_SHA256}"
+                  },
+                  "ipkSize": ${IPK_SIZE},
+                  "installedSize": 0
+                },
+                "pool": "main",
+                "detailIconUri": "https://raw.githubusercontent.com/xbmc/xbmc/master/media/icon256x256.png",
+                "requirements": {
+                  "webosRelease": ">=4.0",
+                  "deviceSoC": [
+                    "!k5lp"
+                  ]
+                },
+                "shortDescription": null,
+                "fullDescriptionUrl": "apps/org.xbmc.kodi/full_description.html"
+              }
+            ]
+          }
+          JSON
+
+          echo "ipk_path=release/${IPK_BASENAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub release with IPK and app.json
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.release_tag }}
+          name: ${{ steps.meta.outputs.release_name }}
+          generate_release_notes: true
+          files: |
+            release/*.ipk
+            release/*.json
+            release/*.tar.gz
