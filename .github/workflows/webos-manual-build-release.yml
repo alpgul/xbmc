@@ -10,7 +10,7 @@ on:
       toolchain_url:
         description: "Download URL for arm-webos-linux-gnueabi SDK buildroot tar.gz"
         required: true
-        default: "https://github.com/openlgtv/buildroot-nc4/releases/download/webos-a38c582/arm-webos-linux-gnueabi_sdk-buildroot-x86_64.tar.gz"
+        default: "https://github.com/openlgtv/buildroot-nc4/releases/download/webos-b17b4cc/arm-webos-linux-gnueabi_sdk-buildroot.tar.gz"
       release_tag:
         description: "Release tag name (leave empty for auto-generated tag)"
         required: false
@@ -103,7 +103,7 @@ jobs:
               --host=arm-webos-linux-gnueabi \
               --with-toolchain="$TOOLCHAIN_DIR/$TOOLCHAIN_NAME" \
               --with-tarballs="$TARBALLS_DIR" \
-              --disable-debug
+              --enable-debug=no
           }
 
           cd tools/depends
