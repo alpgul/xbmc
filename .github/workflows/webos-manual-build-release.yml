@@ -15,6 +15,11 @@ on:
         description: "Release tag name (leave empty for auto-generated tag)"
         required: false
         default: ""
+      validate_only:
+        description: "Run a faster validation flow (depends + native cmake smoke test only, skip Kodi/ipk/release)"
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -103,27 +108,43 @@ jobs:
             make -j1
           fi
 
+      - name: Validate native cmake target only (fast mode)
+        if: ${{ inputs.validate_only }}
+        run: |
+          set -euo pipefail
+          cd tools/depends
+          make -j1 -C native/cmake
+
+      - name: Stop after validation (fast mode)
+        if: ${{ inputs.validate_only }}
+        run: |
+          echo "validate_only=true -> Skipping Kodi build, ipk packaging and release upload."
+
       - name: Show ccache statistics
         if: always()
         run: ccache --show-stats || true
 
       - name: Generate CMake build system
+        if: ${{ !inputs.validate_only }}
         run: |
           make -C tools/depends/target/cmakebuildsys \
             BUILD_DIR="$BUILD_DIR" \
             CMAKE_EXTRA_ARGUMENTS="-DCORE_PLATFORM_NAME=webos"
 
       - name: Build all binary addons
+        if: ${{ !inputs.validate_only }}
         run: |
           make -j"$(nproc)" -C tools/depends/target/binary-addons \
             PREFIX="$BUILD_DIR/tools/webOS/packaging"
 
       - name: Build Kodi and IPK
+        if: ${{ !inputs.validate_only }}
         run: |
           make -C "$BUILD_DIR" -j"$(nproc)"
           make -C "$BUILD_DIR" ipk
 
       - name: Collect artifacts and metadata
+        if: ${{ !inputs.validate_only }}
         id: meta
         run: |
           set -euo pipefail
@@ -198,6 +219,7 @@ jobs:
           echo "release_tag=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
 
       - name: Create GitHub release and upload artifacts
+        if: ${{ !inputs.validate_only }}
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.meta.outputs.release_tag }}
