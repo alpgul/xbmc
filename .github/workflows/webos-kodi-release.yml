@@ -64,6 +64,7 @@ jobs:
             gawk \
             git \
             libssl-dev \
+            libcurl4-openssl-dev \
             libtool \
             ninja-build \
             pkg-config \
