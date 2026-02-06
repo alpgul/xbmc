@@ -250,8 +250,7 @@ jobs:
 
           echo "ipk_path=release/${IPK_BASENAME}" >> "$GITHUB_OUTPUT"
 
-      - name: Commit app.json to active branch (skip Omega)
-        if: github.ref_name != 'Omega'
+      - name: Commit app.json to active branch
         shell: bash
         run: |
           set -euo pipefail
