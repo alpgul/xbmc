@@ -78,6 +78,8 @@ jobs:
           set -euo pipefail
           mkdir -p "$TARBALLS_DIR" "$CCACHE_DIR"
           ccache --zero-stats || true
+          DEPENDS_LOG="$RUNNER_TEMP/depends-build.log"
+          exec > >(tee -a "$DEPENDS_LOG") 2>&1
 
           configure_depends() {
             ./configure \
@@ -107,6 +109,35 @@ jobs:
             configure_depends
             make -j1
           fi
+
+      - name: Collect depends diagnostics on failure
+        if: ${{ failure() }}
+        run: |
+          set -euo pipefail
+          DIAG_DIR="$RUNNER_TEMP/depends-diagnostics"
+          mkdir -p "$DIAG_DIR"
+          {
+            echo "== pwd =="
+            pwd
+            echo "== tools/depends/native/cmake (maxdepth 3) =="
+            find tools/depends/native/cmake -maxdepth 3 -mindepth 1 -print 2>/dev/null || true
+            echo "== tools/depends/native/python3 (maxdepth 3) =="
+            find tools/depends/native/python3 -maxdepth 3 -mindepth 1 -print 2>/dev/null || true
+          } > "$DIAG_DIR/filesystem-snapshot.txt"
+
+          if [ -f "$RUNNER_TEMP/depends-build.log" ]; then
+            cp "$RUNNER_TEMP/depends-build.log" "$DIAG_DIR/depends-build.log"
+          fi
+
+      - name: Upload depends diagnostics artifact
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: depends-diagnostics-${{ github.run_number }}
+          path: |
+            ${{ runner.temp }}/depends-build.log
+            ${{ runner.temp }}/depends-diagnostics/filesystem-snapshot.txt
+          if-no-files-found: ignore
 
       - name: Validate native cmake target only (fast mode)
         if: ${{ inputs.validate_only }}
