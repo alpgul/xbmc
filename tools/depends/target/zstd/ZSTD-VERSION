@@ -3,5 +3,6 @@ BASE_URL=https://github.com/facebook/zstd
 VERSION=1.5.6
 FULL_URL=$(BASE_URL)/releases/download/v$(VERSION)/zstd-$(VERSION).tar.gz
 ARCHIVE=zstd-$(VERSION).tar.gz
+SHA512=54a578f2484da0520a6e9a24f501b9540a3fe3806785d6bc9db79fc095b7c142a7c121387c7eecd460ca71446603584ef1ba4d29a33ca90873338c9ffbd04f14
 BYPRODUCT=libzstd.a
 BYPRODUCT_WIN=zstd.lib
