@@ -22,15 +22,21 @@ all: .installed-$(PLATFORM)
 $(PLATFORM): $(DEPS) | $(TARBALLS_LOCATION)/$(ARCHIVE).$(HASH_TYPE)
 	rm -rf $(PLATFORM); mkdir -p $(PLATFORM)/build
 	cd $(PLATFORM); $(ARCHIVE_TOOL) $(ARCHIVE_TOOL_FLAGS) $(TARBALLS_LOCATION)/$(ARCHIVE)
+	cd $(PLATFORM); patch -p1 -i ../01-fix-at-hwcap2-definition.patch
 	cd $(PLATFORM)/build; $(CMAKE) $(CMAKE_OPTIONS) ..
 
 $(LIBDYLIB): $(PLATFORM)
-	$(MAKE) -C $(PLATFORM)/build
+	$(MAKE) -C $(PLATFORM)/build crypto ssl
 
 .installed-$(PLATFORM): $(LIBDYLIB)
-	$(MAKE) -C $(PLATFORM)/build install
+	# make install yerine manuel kurulum yapıyoruz
 	mkdir -p $(PREFIX)/include/openssl
+	mkdir -p $(PREFIX)/lib
 	cp -rf $(PLATFORM)/include/openssl/* $(PREFIX)/include/openssl/
+	cp -f $(PLATFORM)/build/crypto/libcrypto.a $(PREFIX)/lib/
+	cp -f $(PLATFORM)/build/ssl/libssl.a $(PREFIX)/lib/
+	# Eğer decrepit kütüphanesi oluştuysa onu da kopyalayalım (isteğe bağlı)
+	test -f $(PLATFORM)/build/decrepit/libdecrepit.a && cp -f $(PLATFORM)/build/decrepit/libdecrepit.a $(PREFIX)/lib/ || true
 	touch $@
 
 clean:
