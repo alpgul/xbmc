@@ -8,6 +8,7 @@ CMAKE_OPTIONS=-DCMAKE_INSTALL_PREFIX=$(PREFIX) \
               -DBUILD_STATIC_LIBS=ON \
               -DBUILD_LIBCURL_DOCS=OFF \
               -DENABLE_CURL_MANUAL=OFF \
+              -DCURL_USE_LIBPSL=OFF
               -DCURL_DISABLE_TESTS=OFF \
               -DCURL_DISABLE_LDAP=ON \
               -DCURL_DISABLE_LDAPS=ON \

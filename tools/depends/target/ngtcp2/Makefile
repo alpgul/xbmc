@@ -14,7 +14,8 @@ CMAKE_OPTIONS=-DCMAKE_INSTALL_PREFIX=$(PREFIX) \
               -DENABLE_BORINGSSL=ON \
               -DWITH_LIBNGHTTP3=ON \
               -DBORINGSSL_INCLUDE_DIR=$(PREFIX)/include \
-              -DBORINGSSL_LIBRARIES="-L$(PREFIX)/lib -lssl -lcrypto -lpthread"
+              -DBORINGSSL_LIBRARIES="-L$(PREFIX)/lib -lssl -lcrypto -lpthread" \
+              -DHAVE_SSL_SET_QUIC_EARLY_DATA_CONTEXT=1
 
 LIBDYLIB=$(PLATFORM)/build/lib/$(BYPRODUCT)
 
