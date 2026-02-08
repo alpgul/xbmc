@@ -8,6 +8,7 @@ endif
 DEPENDS = \
   bzip2 \
   boringssl \
+  brotli \
   c-ares \
   curl \
   dav1d \
@@ -155,7 +156,7 @@ $(DOWNLOAD_TARGETS):
 download: $(DOWNLOAD_TARGETS)
 
 crossguid: $(LIBUUID)
-curl: boringssl nghttp2 c-ares zstd nghttp3 ngtcp2 $(ZLIB)
+curl: boringssl brotli nghttp2 c-ares zstd nghttp3 ngtcp2 $(ZLIB)
 dbus: expat
 ffmpeg: $(ICONV) $(ZLIB) bzip2 gnutls dav1d $(LIBVA)
 fontconfig: freetype2 expat $(ICONV) $(LIBUUID)
