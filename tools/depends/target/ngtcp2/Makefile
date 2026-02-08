@@ -1,20 +1,20 @@
 include ../../Makefile.include NGTCP2-VERSION ../../download-files.include
 DEPS = ../../Makefile.include Makefile NGTCP2-VERSION ../../download-files.include
 
-# CMake configuration options
+# Yeni izole yollarla güncellenmiş CMAKE_OPTIONS
 CMAKE_OPTIONS=-DCMAKE_INSTALL_PREFIX=$(PREFIX) \
               -DCMAKE_BUILD_TYPE=Release \
               -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
               -DENABLE_STATIC_LIB=ON \
               -DENABLE_SHARED_LIB=OFF \
-			  -DBUILD_TESTING=OFF \
+              -DBUILD_TESTING=OFF \
               -DENABLE_LIB_ONLY=ON \
               -DENABLE_PYTHON_BINDINGS=OFF \
               -DENABLE_OPENSSL=OFF \
               -DENABLE_BORINGSSL=ON \
               -DWITH_LIBNGHTTP3=ON \
-              -DBORINGSSL_INCLUDE_DIR=$(PREFIX)/include \
-              -DBORINGSSL_LIBRARIES="-L$(PREFIX)/lib -lssl -lcrypto -lpthread" \
+              -DBORINGSSL_INCLUDE_DIR=$(PREFIX)/include/boringssl \
+              -DBORINGSSL_LIBRARIES="-L$(PREFIX)/lib/boringssl -lssl -lcrypto -lpthread " \
               -DHAVE_SSL_SET_QUIC_EARLY_DATA_CONTEXT=1
 
 LIBDYLIB=$(PLATFORM)/build/lib/$(BYPRODUCT)

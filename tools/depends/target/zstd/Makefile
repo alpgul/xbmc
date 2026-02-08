@@ -1,6 +1,15 @@
 include ../../Makefile.include ZSTD-VERSION ../../download-files.include
 DEPS = ../../Makefile.include Makefile ZSTD-VERSION ../../download-files.include
 
+# Cross-compile değişkenlerini zstd'ye geçirmek için hazırlıyoruz
+ZSTD_MAKE_ARGS = CC="$(CC)" \
+                 CXX="$(CXX)" \
+                 AR="$(AR)" \
+                 RANLIB="$(RANLIB)" \
+                 CFLAGS="$(CFLAGS) -fPIC" \
+                 LDFLAGS="$(LDFLAGS)" \
+                 PREFIX=$(PREFIX)
+
 LIBDYLIB=$(PLATFORM)/lib/$(BYPRODUCT)
 
 all: .installed-$(PLATFORM)
@@ -10,10 +19,12 @@ $(PLATFORM): $(DEPS) | $(TARBALLS_LOCATION)/$(ARCHIVE).$(HASH_TYPE)
 	cd $(PLATFORM); $(ARCHIVE_TOOL) $(ARCHIVE_TOOL_FLAGS) $(TARBALLS_LOCATION)/$(ARCHIVE)
 
 $(LIBDYLIB): $(PLATFORM)
-	$(MAKE) -C $(PLATFORM)/lib libzstd.a PREFIX=$(PREFIX)
+	# Burada ZSTD_MAKE_ARGS ekledik
+	$(MAKE) -C $(PLATFORM)/lib libzstd.a $(ZSTD_MAKE_ARGS)
 
 .installed-$(PLATFORM): $(LIBDYLIB)
-	$(MAKE) -C $(PLATFORM)/lib install-pc install-static install-includes PREFIX=$(PREFIX)
+	# Burada da ZSTD_MAKE_ARGS ekledik
+	$(MAKE) -C $(PLATFORM)/lib install-pc install-static install-includes $(ZSTD_MAKE_ARGS)
 	touch $@
 
 clean:

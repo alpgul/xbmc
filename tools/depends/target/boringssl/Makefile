@@ -29,19 +29,18 @@ $(LIBDYLIB): $(PLATFORM)
 	$(MAKE) -C $(PLATFORM)/build crypto ssl
 
 .installed-$(PLATFORM): $(LIBDYLIB)
-	# make install yerine manuel kurulum yapıyoruz
-	mkdir -p $(PREFIX)/include/openssl
-	mkdir -p $(PREFIX)/lib
-	cp -rf $(PLATFORM)/include/openssl/* $(PREFIX)/include/openssl/
-	cp -f $(PLATFORM)/build/crypto/libcrypto.a $(PREFIX)/lib/
-	cp -f $(PLATFORM)/build/ssl/libssl.a $(PREFIX)/lib/
-	# Eğer decrepit kütüphanesi oluştuysa onu da kopyalayalım (isteğe bağlı)
-	test -f $(PLATFORM)/build/decrepit/libdecrepit.a && cp -f $(PLATFORM)/build/decrepit/libdecrepit.a $(PREFIX)/lib/ || true
+	mkdir -p $(PREFIX)/include/boringssl/openssl
+	mkdir -p $(PREFIX)/lib/boringssl
+	cp -rf $(PLATFORM)/include/openssl/* $(PREFIX)/include/boringssl/openssl/
+	cp -f $(PLATFORM)/build/crypto/libcrypto.a $(PREFIX)/lib/boringssl/
+	cp -f $(PLATFORM)/build/ssl/libssl.a $(PREFIX)/lib/boringssl/
 	touch $@
 
 clean:
-	$(MAKE) -C $(PLATFORM)/build clean
+	# Eğer dizin varsa içeri girip temizle, yoksa hata verme
+	[ -d $(PLATFORM)/build ] && $(MAKE) -C $(PLATFORM)/build clean || true
 	rm -f .installed-$(PLATFORM)
 
 distclean::
+	# Tüm platform dizinini ve install logunu sil
 	rm -rf $(PLATFORM) .installed-$(PLATFORM)
