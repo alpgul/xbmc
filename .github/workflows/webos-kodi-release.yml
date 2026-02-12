@@ -62,6 +62,7 @@ jobs:
             cmake \
             curl \
             gawk \
+            golang-go \
             git \
             libssl-dev \
             libcurl4-openssl-dev \
