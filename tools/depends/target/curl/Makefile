@@ -9,12 +9,10 @@ CMAKE_OPTIONS=-DCMAKE_INSTALL_PREFIX=$(PREFIX) \
               -DBUILD_LIBCURL_DOCS=OFF \
               -DENABLE_CURL_MANUAL=OFF \
               -DCURL_USE_LIBPSL=OFF \
-              -DCURL_DISABLE_TESTS=ON \
               -DCURL_DISABLE_LDAP=ON \
               -DCURL_DISABLE_LDAPS=ON \
               -DCURL_DISABLE_SMB=OFF \
               -DCURL_USE_OPENSSL=ON \
-              -DOPENSSL_ROOT_DIR=$(PREFIX)/lib/boringssl \
               -DOPENSSL_INCLUDE_DIR=$(PREFIX)/include/boringssl \
               -DOPENSSL_CRYPTO_LIBRARY=$(PREFIX)/lib/boringssl/libcrypto.a \
               -DOPENSSL_SSL_LIBRARY=$(PREFIX)/lib/boringssl/libssl.a \
@@ -26,15 +24,11 @@ CMAKE_OPTIONS=-DCMAKE_INSTALL_PREFIX=$(PREFIX) \
               -DUSE_NGHTTP3=ON \
               -DUSE_NGTCP2=ON \
               -DHAVE_BORINGSSL=1 \
-              -DCURL_DEFAULT_SSL_BACKEND=openssl \
               -DUSE_OPENSSL_QUIC=OFF \
               -DUSE_ECH=OFF \
               -DUSE_HTTPSRR=ON \
               -DOPENSSL_USE_STATIC_LIBS=ON \
-              -DCMAKE_EXE_LINKER_FLAGS="-lstdc++ -lpthread -ldl" \
-              -DCMAKE_REQUIRED_LIBRARIES="stdc++;pthread;dl" \
-              -DCMAKE_C_FLAGS="-DOPENSSL_IS_BORINGSSL" \
-              -DHAVE_SSL_CTX_SET_QUIC_METHOD=1 \
+              -DHAVE_SSL_SET_QUIC_USE_LEGACY_CODEPOINT=1 \
               -DENABLE_ARES=ON \
               -DCURL_ZSTD=ON \
               -DCURL_CA_FALLBACK=ON
@@ -46,6 +40,7 @@ all: .installed-$(PLATFORM)
 $(PLATFORM): $(DEPS) | $(TARBALLS_LOCATION)/$(ARCHIVE).$(HASH_TYPE)
 	rm -rf $(PLATFORM); mkdir -p $(PLATFORM)/build
 	cd $(PLATFORM); $(ARCHIVE_TOOL) $(ARCHIVE_TOOL_FLAGS) $(TARBALLS_LOCATION)/$(ARCHIVE)
+	cd $(PLATFORM); patch -p1 < ../02-boringssl-prefix-fix.patch
 	cd $(PLATFORM)/build; $(CMAKE) ${CMAKE_OPTIONS} ..
 
 $(LIBDYLIB): $(PLATFORM)
