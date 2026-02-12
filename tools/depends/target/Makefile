@@ -7,6 +7,9 @@ endif
 # Keep in alphabetical order
 DEPENDS = \
   bzip2 \
+  boringssl \
+  brotli \
+  c-ares \
   curl \
   dav1d \
   expat \
@@ -38,6 +41,8 @@ DEPENDS = \
   mariadb \
   nettle \
   nghttp2 \
+  nghttp3 \
+  ngtcp2 \
   openssl \
   python3 \
   pythonmodule-pil \
@@ -46,7 +51,8 @@ DEPENDS = \
   sqlite3 \
   tinyxml \
   udfread \
-  xz
+  xz \
+  zstd
 
 ifeq ($(ENABLE_GPLV3),yes)
   DEPENDS+=samba-gplv3 libcdio-gplv3
@@ -150,7 +156,7 @@ $(DOWNLOAD_TARGETS):
 download: $(DOWNLOAD_TARGETS)
 
 crossguid: $(LIBUUID)
-curl: openssl nghttp2 $(ZLIB)
+curl: boringssl brotli nghttp2 c-ares zstd nghttp3 ngtcp2 $(ZLIB)
 dbus: expat
 ffmpeg: $(ICONV) $(ZLIB) bzip2 gnutls dav1d $(LIBVA)
 fontconfig: freetype2 expat $(ICONV) $(LIBUUID)
@@ -176,6 +182,7 @@ libzip: bzip2 gnutls $(ZLIB)
 mariadb: openssl $(ICONV) $(ZLIB)
 mesa: libdrm $(MESA_DEPS) $(ZLIB)
 nettle: gmp
+ngtcp2: boringssl nghttp3
 openssl: $(ZLIB)
 python3: expat gettext libxml2 sqlite3 openssl libffi bzip2 xz $(ICONV)
 pythonmodule-pil: bzip2 $(PYMODULE_DEPS) $(ZLIB) libjpeg-turbo libpng freetype2 python3 pythonmodule-setuptools
