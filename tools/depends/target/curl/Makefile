@@ -8,7 +8,7 @@ CMAKE_OPTIONS=-DCMAKE_INSTALL_PREFIX=$(PREFIX) \
               -DBUILD_STATIC_LIBS=ON \
               -DBUILD_LIBCURL_DOCS=OFF \
               -DENABLE_CURL_MANUAL=OFF \
-              -DCURL_USE_LIBPSL=OFF \
+              -DCURL_DISABLE_TESTS=OFF \
               -DCURL_DISABLE_LDAP=ON \
               -DCURL_DISABLE_LDAPS=ON \
               -DCURL_DISABLE_SMB=OFF \
@@ -21,17 +21,14 @@ CMAKE_OPTIONS=-DCMAKE_INSTALL_PREFIX=$(PREFIX) \
               -DUSE_LIBIDN2=OFF \
               -DCURL_USE_LIBSSH2=OFF \
               -DCURL_USE_GSSAPI=OFF \
+              -DCURL_CA_FALLBACK=ON \
               -DUSE_NGHTTP3=ON \
               -DUSE_NGTCP2=ON \
-              -DHAVE_BORINGSSL=1 \
-              -DUSE_OPENSSL_QUIC=OFF \
-              -DUSE_ECH=OFF \
-              -DUSE_HTTPSRR=ON \
-              -DOPENSSL_USE_STATIC_LIBS=ON \
-              -DHAVE_SSL_SET_QUIC_USE_LEGACY_CODEPOINT=1 \
-              -DENABLE_ARES=ON \
               -DCURL_ZSTD=ON \
-              -DCURL_CA_FALLBACK=ON
+              -DHAVE_BORINGSSL=1 \
+              -DHAVE_SSL_SET_QUIC_USE_LEGACY_CODEPOINT=1 \
+              -DCMAKE_C_FLAGS="-pthread -fPIC" \
+              -DCMAKE_CXX_FLAGS="-pthread -fPIC -lc++" 
 
 LIBDYLIB=$(PLATFORM)/build/lib/$(BYPRODUCT)
 

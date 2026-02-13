@@ -38,11 +38,6 @@ if(${CURL_LIBRARY} MATCHES ".+\.a$" AND PC_CURL_STATIC_LDFLAGS)
   find_library(NGHTTP2_LIBRARY NAMES libnghttp2 nghttp2
                                PATHS ${PC_NGHTTP2_LIBDIR})
 
-  # c-ares (async DNS resolver)
-  pkg_check_modules(PC_CARES libcares QUIET)
-  find_library(CARES_LIBRARY NAMES libcares cares
-                             PATHS ${PC_CARES_LIBDIR})
-
   # brotli (content decoding)
   pkg_check_modules(PC_BROTLIDEC libbrotlidec QUIET)
   find_library(BROTLIDEC_LIBRARY NAMES libbrotlidec brotlidec
