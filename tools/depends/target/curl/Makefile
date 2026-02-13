@@ -26,9 +26,10 @@ CMAKE_OPTIONS=-DCMAKE_INSTALL_PREFIX=$(PREFIX) \
               -DUSE_NGTCP2=ON \
               -DCURL_ZSTD=ON \
               -DHAVE_BORINGSSL=1 \
+              -DCURL_USE_LIBPSL=OFF \
               -DHAVE_SSL_SET_QUIC_USE_LEGACY_CODEPOINT=1 \
-              -DCMAKE_C_FLAGS="-pthread -fPIC" \
-              -DCMAKE_CXX_FLAGS="-pthread -fPIC -lc++" 
+              -DCMAKE_C_FLAGS="$(CFLAGS) -pthread -fPIC" \
+              -DCMAKE_CXX_FLAGS="$(CXXFLAGS) -pthread -fPIC -lc++" 
 
 LIBDYLIB=$(PLATFORM)/build/lib/$(BYPRODUCT)
 

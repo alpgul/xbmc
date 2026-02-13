@@ -6,8 +6,9 @@ ZSTD_MAKE_ARGS = CC="$(CC)" \
                  CXX="$(CXX)" \
                  AR="$(AR)" \
                  RANLIB="$(RANLIB)" \
-                 CFLAGS="$(CFLAGS) -fPIC" \
-                 LDFLAGS="$(LDFLAGS)" \
+				 CFLAGS="$(CFLAGS) -fPIC -pthread" \
+                 CXXFLAGS="$(CXXFLAGS) -fPIC -pthread" \
+                 LDFLAGS="$(LDFLAGS) -pthread" \
                  PREFIX=$(PREFIX)
 
 LIBDYLIB=$(PLATFORM)/lib/$(BYPRODUCT)

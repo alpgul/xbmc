@@ -12,7 +12,7 @@ CMAKE_OPTIONS=-DCMAKE_INSTALL_PREFIX=$(PREFIX) \
 			  -DCMAKE_BUILD_TYPE=Release \
 			  -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
 			  -DCMAKE_C_FLAGS="$(CFLAGS) -pthread -Wno-unknown-warning-option -Wno-stringop-overflow -Wno-array-bounds -Wno-macro-redefined" \
-			  -DCMAKE_CXX_FLAGS="$(CXX_FLAGS) -pthread -Wno-macro-redefined" \
+			  -DCMAKE_CXX_FLAGS="$(CXXFLAGS) -pthread -Wno-macro-redefined" \
 			  -DCMAKE_SYSTEM_NAME=$(SYSTEM_NAME) \
 			  -DBORINGSSL_PREFIX=BSSL \
 			  -DBORINGSSL_PREFIX_SYMBOLS=../symbols.txt \

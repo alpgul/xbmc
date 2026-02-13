@@ -8,6 +8,9 @@ LIBDYLIB=$(PLATFORM)/build/$(BYPRODUCT)
 CMAKE_OPTIONS=-DBUILD_SHARED_LIBS=OFF \
               -DCMAKE_INSTALL_PREFIX=$(PREFIX) \
               -DCMAKE_BUILD_TYPE=Release \
+			  -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+              -DCMAKE_C_FLAGS="$(CFLAGS) -fPIC -pthread" \
+              -DCMAKE_CXX_FLAGS="$(CXXFLAGS) -fPIC -pthread" \
               -DBROTLI_DISABLE_TESTS=ON \
               -DBROTLI_DISABLE_EXE=ON
 

@@ -6,7 +6,10 @@ CMAKE_OPTIONS=-DENABLE_DEBUG=OFF \
               -DENABLE_FAILMALLOC=OFF \
               -DENABLE_LIB_ONLY=ON \
               -DENABLE_STATIC_LIB=ON \
-              -DENABLE_SHARED_LIB=OFF
+              -DENABLE_SHARED_LIB=OFF \
+			  -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+              -DCMAKE_C_FLAGS="$(CFLAGS) -fPIC -pthread" \
+              -DCMAKE_CXX_FLAGS="$(CXXFLAGS) -fPIC -pthread"
 
 LIBDYLIB=$(PLATFORM)/build/lib/$(BYPRODUCT)
 
