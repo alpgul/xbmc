@@ -10,20 +10,20 @@
       "id": "org.xbmc.kodi",
       "title": "Kodi",
       "iconUri": "https://repo.webosbrew.org/apps/icons/org.xbmc.kodi.png",
-      "manifestUrl": "/api/apps/org.xbmc.kodi/manifests/feat/omega-http3.json",
+      "manifestUrl": "/api/apps/org.xbmc.kodi/manifests/Omega.json",
       "manifest": {
         "id": "org.xbmc.kodi",
         "title": "Kodi",
-        "version": "feat/omega-http3",
+        "version": "Omega",
         "type": "native",
         "appDescription": null,
         "iconUri": "https://repo.webosbrew.org/apps/icons/org.xbmc.kodi.png",
         "sourceUrl": "https://github.com/xbmc/xbmc",
-        "ipkUrl": "https://github.com/alpgul/xbmc/releases/download/webos-feat/omega-http3-20260213-125245/org.xbmc.kodi_21.3.0_arm.ipk",
+        "ipkUrl": "https://github.com/alpgul/xbmc/releases/download/webos-Omega-20260206-222826/org.xbmc.kodi_21.3.0_arm.ipk",
         "ipkHash": {
-          "sha256": "34c92a2b87f55cc9331c30d25d47e466a1799d70284957aebd5fe7ff6693dbfd"
+          "sha256": "d56b524faf0a6f10a468a0ebfe44d76f8e903fdcac452f45749dd6323eb5f67b"
         },
-        "ipkSize": 109029044,
+        "ipkSize": 108166468,
         "installedSize": 0
       },
       "pool": "main",
