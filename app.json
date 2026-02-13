@@ -19,11 +19,11 @@
         "appDescription": null,
         "iconUri": "https://repo.webosbrew.org/apps/icons/org.xbmc.kodi.png",
         "sourceUrl": "https://github.com/xbmc/xbmc",
-        "ipkUrl": "https://github.com/alpgul/xbmc/releases/download/webos-feat/omega-http3-20260213-112807/org.xbmc.kodi_21.3.0_arm.ipk",
+        "ipkUrl": "https://github.com/alpgul/xbmc/releases/download/webos-feat/omega-http3-20260213-125245/org.xbmc.kodi_21.3.0_arm.ipk",
         "ipkHash": {
-          "sha256": "91beab55ed6a2210d5c52399960edc0c85c46bd33d3ef940aa4412c099018b01"
+          "sha256": "34c92a2b87f55cc9331c30d25d47e466a1799d70284957aebd5fe7ff6693dbfd"
         },
-        "ipkSize": 98310812,
+        "ipkSize": 109029044,
         "installedSize": 0
       },
       "pool": "main",
