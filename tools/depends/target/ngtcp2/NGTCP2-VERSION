@@ -1,0 +1,8 @@
+LIBNAME=ngtcp2
+BASE_URL=https://github.com/ngtcp2/ngtcp2
+VERSION=1.11.0
+FULL_URL=$(BASE_URL)/releases/download/v$(VERSION)/ngtcp2-$(VERSION).tar.gz
+SHA512=e5d3b51a85f2cb502ff4bf416b6b700d56abbfa517df4b1fce4eaa26bd43640a299b9f9b29c8aeabccc4cff15b6289278a59ff0d151a335cfa75e085658a6d2d
+ARCHIVE=ngtcp2-$(VERSION).tar.gz
+BYPRODUCT=libngtcp2.a
+BYPRODUCT_WIN=ngtcp2.lib
