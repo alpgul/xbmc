@@ -1,0 +1,8 @@
+LIBNAME=nghttp3
+BASE_URL=https://github.com/ngtcp2/nghttp3
+VERSION=1.9.0
+FULL_URL=$(BASE_URL)/releases/download/v$(VERSION)/nghttp3-$(VERSION).tar.gz
+SHA512=54799f5ed453f1e0d73f9e93fe25edd60674217f0c41c5d26699700bb13d974d8ff3496f5dece9f63a45018a5396553a439e749441f721c0331974400c24e3f0
+ARCHIVE=nghttp3-$(VERSION).tar.gz
+BYPRODUCT=libnghttp3.a
+BYPRODUCT_WIN=nghttp3.lib
