@@ -14,7 +14,7 @@ ifeq ($(OS),android)
   CMAKE_OPTIONS+= -DANDROID_PLATFORM_LEVEL=$(NDK_LEVEL)
 endif
 
-LIBDYLIB=$(PLATFORM)/build/lib/$(BYPRODUCT)
+LIBDYLIB=$(PLATFORM)/build-dir/lib/$(BYPRODUCT)
 
 all: .installed-$(PLATFORM)
 
