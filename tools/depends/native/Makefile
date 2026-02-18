@@ -14,6 +14,7 @@ NATIVE= \
   gas-preprocessor \
   gettext \
   giflib \
+  go \
   heimdal \
   libjpeg-turbo \
   liblzo2 \
