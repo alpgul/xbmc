@@ -49,9 +49,9 @@ $(LIBDYLIB): $(PLATFORM)
 		echo "Name: BoringSSL-Crypto"; \
 		echo "Description: BoringSSL crypto library with symbol prefixing"; \
 		echo "Version: 1.1.1"; \
-		echo "Libs: -L\$${libdir} -lcrypto"; \
+		echo "Libs: -L\$${libdir} \$${libdir}/libcrypto.a"; \
 		echo "Libs.private: -lz -ldl -pthread -latomic"; \
-		echo "Cflags: -I\$${includedir} -DBORINGSSL_PREFIX=BSSL"; \
+		echo "Cflags: -I\$${includedir}"; \
 	) > $(PREFIX)/boringssl/lib/pkgconfig/libcrypto.pc
 	# libssl.pc
 	( \
@@ -64,8 +64,9 @@ $(LIBDYLIB): $(PLATFORM)
 		echo "Description: BoringSSL ssl library with symbol prefixing"; \
 		echo "Version: 1.1.1"; \
 		echo "Requires: libcrypto"; \
-		echo "Libs: -L\$${libdir} -lssl"; \
-		echo "Cflags: -I\$${includedir} -DBORINGSSL_PREFIX=BSSL"; \
+		echo "Libs: -L\$${libdir} \$${libdir}/libssl.a -lstdc++"; \
+		echo "Libs.private: -pthread"; \
+		echo "Cflags: -I\$${includedir}"; \
 	) > $(PREFIX)/boringssl/lib/pkgconfig/libssl.pc
 	# openssl.pc
 	( \
