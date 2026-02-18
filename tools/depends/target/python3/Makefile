@@ -41,6 +41,7 @@ endif
 # configuration settings
 CONFIGURE=./configure --prefix=$(PREFIX) \
                       --disable-shared \
+                      --with-openssl=$(PREFIX)/openssl \
                       --without-ensurepip \
                       --disable-framework \
                       --without-pymalloc \

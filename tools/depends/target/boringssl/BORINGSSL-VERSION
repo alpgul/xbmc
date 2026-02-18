@@ -1,0 +1,8 @@
+LIBNAME=boringssl
+BASE_URL=https://github.com/lexiforest/boringssl
+VERSION=77dc0ca663ad0bdc6fd5006cbd398bc27d0af4ab
+FULL_URL=$(BASE_URL)/archive/$(VERSION).tar.gz
+SHA512=2a1a816de35b60d578dd146d4d6404479642d62b854e00db74346e8ae159ef6c0784c88d55dd2f6af1b6a6ac8bb5c4c24dd944517d0eb5854001a3b8831673e7
+ARCHIVE=boringssl-$(VERSION).tar.gz
+BYPRODUCT=libssl.a
+BYPRODUCT_WIN=ssl.lib

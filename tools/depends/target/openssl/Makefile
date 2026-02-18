@@ -6,7 +6,7 @@ DEPS = ../../Makefile.include Makefile OPENSSL-VERSION ../../download-files.incl
 ifeq ($(OS), linux)
   # Need to export our vars to override "default" conf data of openssl
   TARGETOPT=--with-zlib-include=$(PREFIX)/include --with-zlib-lib=$(PREFIX)/lib
-  CONFIGURE=MACHINE=$(PLATFORM) ./config no-shared zlib no-tests no-asm $(TARGETOPT) --prefix=$(PREFIX) --libdir=lib
+  CONFIGURE=MACHINE=$(PLATFORM) ./config no-shared zlib no-tests no-asm $(TARGETOPT) --prefix=$(PREFIX)/openssl --libdir=lib
 else
   ifeq ($(OS), android)
     TARGETOPT=--with-zlib-include=$(PREFIX)/include --with-zlib-lib=$(PREFIX)/lib -D__ANDROID_API__=$(NDK_LEVEL)
@@ -35,7 +35,7 @@ else
     ASMFLAG=no-asm
   endif
 
-  CONFIGURE=./Configure $(OPENSSLPLATFORM) no-shared $(ASMFLAG) zlib no-tests $(TARGETOPT) --prefix=$(PREFIX)
+  CONFIGURE=./Configure $(OPENSSLPLATFORM) no-shared $(ASMFLAG) zlib no-tests $(TARGETOPT) --prefix=$(PREFIX)/openssl
 endif
 
 export CC CXX AR RANLIB

@@ -36,6 +36,27 @@ if(${CURL_LIBRARY} MATCHES ".+\.a$" AND PC_CURL_STATIC_LDFLAGS)
   pkg_check_modules(PC_NGHTTP2 libnghttp2 QUIET)
   find_library(NGHTTP2_LIBRARY NAMES libnghttp2 nghttp2
                                PATHS ${PC_NGHTTP2_LIBDIR})
+
+  find_library(SSL_LIBRARY NAMES libssl ssl
+                                HINTS ${DEPENDS_PATH}/boringssl/lib)
+  find_path(SSL_INCLUDE_DIR NAMES openssl/ssl.h
+                             HINTS ${DEPENDS_PATH}/boringssl/include)
+
+  find_library(CRYPTO_LIBRARY NAMES libcrypto crypto
+                                   HINTS ${DEPENDS_PATH}/boringssl/lib)
+
+  set(SSL_LIBRARY ${SSL_LIBRARY} ${CRYPTO_LIBRARY})
+
+  pkg_check_modules(PC_NGHTTP3 libnghttp3 QUIET)
+  find_library(NGHTTP3_LIBRARY NAMES libnghttp3 nghttp3
+                               PATHS ${PC_NGHTTP3_LIBDIR})
+
+  pkg_check_modules(PC_NGTCP2 libngtcp2 QUIET)
+  find_library(NGTCP2_LIB NAMES libngtcp2 ngtcp2
+                          PATHS ${PC_NGTCP2_LIBDIR})
+  find_library(NGTCP2_CRYPTO_LIB NAMES libngtcp2_crypto_boringssl ngtcp2_crypto_boringssl
+                                 PATHS ${PC_NGTCP2_LIBDIR})
+  set(NGTCP2_LIBRARY ${NGTCP2_LIB} ${NGTCP2_CRYPTO_LIB})
 endif()
 
 include(FindPackageHandleStandardArgs)
@@ -44,8 +65,8 @@ find_package_handle_standard_args(Curl
                                   VERSION_VAR CURL_VERSION)
 
 if(CURL_FOUND)
-  set(CURL_INCLUDE_DIRS ${CURL_INCLUDE_DIR})
-  set(CURL_LIBRARIES ${CURL_LIBRARY} ${NGHTTP2_LIBRARY})
+  set(CURL_INCLUDE_DIRS ${CURL_INCLUDE_DIR} ${BSSL_INCLUDE_DIR})
+  set(CURL_LIBRARIES ${CURL_LIBRARY} ${NGHTTP2_LIBRARY} ${BSSL_LIBRARY} ${NGHTTP3_LIBRARY} ${NGTCP2_LIBRARY})
 
   if(NOT TARGET Curl::Curl)
     add_library(Curl::Curl ${CURL_LIB_TYPE} IMPORTED)

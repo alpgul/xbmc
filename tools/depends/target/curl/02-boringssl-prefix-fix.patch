@@ -1,0 +1,47 @@
+--- a/m4/curl-openssl.m4	2026-02-07 18:49:12.000000000 +0300
++++ b/m4/curl-openssl.m4	2026-02-17 20:30:01.446742322 +0300
+@@ -316,11 +316,11 @@
+   fi
+ 
+   dnl is this OpenSSL (fork) providing the original QUIC API?
+-  AC_CHECK_FUNCS([SSL_set_quic_use_legacy_codepoint], [QUIC_ENABLED=yes])
++  AC_CHECK_FUNCS([BSSL_SSL_set_quic_use_legacy_codepoint], [QUIC_ENABLED=yes])
+   if test "$QUIC_ENABLED" = "yes"; then
+     AC_MSG_NOTICE([OpenSSL fork speaks QUIC API])
+   else
+-    AC_CHECK_FUNCS([SSL_set_quic_tls_cbs], [QUIC_ENABLED=yes])
++    AC_CHECK_FUNCS([BSSL_SSL_set_quic_tls_cbs], [QUIC_ENABLED=yes])
+     if test "$QUIC_ENABLED" = "yes"; then
+       AC_MSG_NOTICE([OpenSSL with QUIC APIv2])
+       OPENSSL_QUIC_API2=1
+
+
+--- a/configure.ac	2026-02-07 18:49:12.000000000 +0300
++++ b/configure.ac	2026-02-17 15:11:27.942292395 +0300
+@@ -5000,7 +5000,7 @@
+ 
+   dnl check for OpenSSL equivalent
+   if test "x$OPENSSL_ENABLED" = "x1"; then
+-    AC_CHECK_FUNCS(SSL_set1_ech_config_list,
++    AC_CHECK_FUNCS(BSSL_SSL_set1_ech_config_list,
+       ECH_SUPPORT="$ECH_SUPPORT OpenSSL"
+       ECH_ENABLED_OPENSSL=1)
+   fi
+@@ -5054,7 +5054,7 @@
+ dnl check whether OpenSSL (lookalikes) have SSL_set0_wbio
+ dnl
+ if test "x$OPENSSL_ENABLED" = "x1"; then
+-  AC_CHECK_FUNCS([SSL_set0_wbio])
++  AC_CHECK_FUNCS([BSSL_SSL_set0_wbio])
+ fi
+ 
+ if test "x$CURL_DISABLE_HTTP" != "x1"; then
+@@ -5476,7 +5476,7 @@
+ 
+ AC_SUBST(SUPPORT_PROTOCOLS)
+ 
+-AC_CHECK_FUNCS([SSL_set_alps_use_new_codepoint])
++AC_CHECK_FUNCS([BSSL_SSL_set_alps_use_new_codepoint])
+ 
+ dnl squeeze whitespace out of some variables
+ 

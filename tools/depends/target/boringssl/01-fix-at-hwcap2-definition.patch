@@ -1,0 +1,13 @@
+--- a/crypto/cpu_arm_linux.cc
++++ b/crypto/cpu_arm_linux.cc
+@@ -21,6 +21,11 @@
+ #include <sys/auxv.h>
+ #include <sys/types.h>
+ #include <unistd.h>
++
++/* webOS SDK workaround: AT_HWCAP2 is not defined in older toolchains */
++#ifndef AT_HWCAP2
++#define AT_HWCAP2 26
++#endif
+ 
+ #include <openssl/mem.h>

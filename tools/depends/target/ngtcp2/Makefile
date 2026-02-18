@@ -10,8 +10,8 @@ CMAKE_OPTIONS := -DCMAKE_INSTALL_PREFIX=$(PREFIX) \
                  -DENABLE_OPENSSL=OFF \
                  -DENABLE_BORINGSSL=ON \
                  -DOPENSSL_NO_OPTS=ON \
-                 -DBORINGSSL_INCLUDE_DIR=$(PREFIX)/include/boringssl \
-                 -DBORINGSSL_LIBRARIES="$(PREFIX)/lib/boringssl/libssl.a;$(PREFIX)/lib/boringssl/libcrypto.a" \
+                 -DBORINGSSL_INCLUDE_DIR=$(PREFIX)/boringssl/include \
+                 -DBORINGSSL_LIBRARIES="$(PREFIX)/boringssl/lib/libssl.a;$(PREFIX)/boringssl/lib/libcrypto.a" \
 				 -DCMAKE_C_FLAGS="$(CFLAGS) -pthread -fPIC" \
 				 -DCMAKE_CXX_FLAGS="$(CXXFLAGS) -pthread -fPIC"
 
