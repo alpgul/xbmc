@@ -14,16 +14,16 @@
       "manifest": {
         "id": "org.xbmc.kodi",
         "title": "Kodi",
-        "version": "20260219-54c626fe-omega-http3",
+        "version": "Omega",
         "type": "native",
-        "appDescription": "Kodi Media Center for webOS with HTTP3 support",
+        "appDescription": null,
         "iconUri": "https://repo.webosbrew.org/apps/icons/org.xbmc.kodi.png",
-        "sourceUrl": "https://github.com/alpgul/xbmc",
-        "ipkUrl": "https://github.com/alpgul/xbmc/releases/download/webos-Omega-20260206-222826/org.xbmc.kodi_20260219-44c626fe-omega-http3_arm.ipk",
+        "sourceUrl": "https://github.com/xbmc/xbmc",
+        "ipkUrl": "https://github.com/alpgul/xbmc/releases/download/webos-Omega-20260206-222826/org.xbmc.kodi_21.3.0_arm.ipk",
         "ipkHash": {
-          "sha256": "efd7c67722b2a1756285c3b12a3f0c0d1866c11d27f4bf696bc0b79c0e32f742"
+          "sha256": "d56b524faf0a6f10a468a0ebfe44d76f8e903fdcac452f45749dd6323eb5f67b"
         },
-        "ipkSize": 72568638,
+        "ipkSize": 108166468,
         "installedSize": 0
       },
       "pool": "main",
@@ -34,7 +34,7 @@
           "!k5lp"
         ]
       },
-      "shortDescription": "Kodi Media Center (HTTP3 Build)",
+      "shortDescription": null,
       "fullDescriptionUrl": "apps/org.xbmc.kodi/full_description.html"
     }
   ]
