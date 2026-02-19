@@ -14,7 +14,7 @@
       "manifest": {
         "id": "org.xbmc.kodi",
         "title": "Kodi",
-        "version": "20260219-44c626fe-omega-http3",
+        "version": "20260219-54c626fe-omega-http3",
         "type": "native",
         "appDescription": "Kodi Media Center for webOS with HTTP3 support",
         "iconUri": "https://repo.webosbrew.org/apps/icons/org.xbmc.kodi.png",
