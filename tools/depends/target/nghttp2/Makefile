@@ -2,11 +2,12 @@ include ../../Makefile.include NGHTTP2-VERSION ../../download-files.include
 DEPS = ../../Makefile.include NGHTTP2-VERSION Makefile ../../download-files.include
 
 # configuration settings
-CMAKE_OPTIONS=-DENABLE_DEBUG=OFF \
-              -DENABLE_FAILMALLOC=OFF \
-              -DENABLE_LIB_ONLY=ON \
-              -DENABLE_STATIC_LIB=ON \
-              -DENABLE_SHARED_LIB=OFF
+CMAKE_OPTIONS=-DCMAKE_BUILD_TYPE=Release \
+              -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+              -DBUILD_SHARED_LIBS=OFF \
+              -DBUILD_STATIC_LIBS=ON \
+              -DENABLE_DOC=OFF \
+              -DENABLE_LIB_ONLY=ON
 
 LIBDYLIB=$(PLATFORM)/build/lib/$(BYPRODUCT)
 
