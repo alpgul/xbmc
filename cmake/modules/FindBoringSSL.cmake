@@ -24,7 +24,7 @@ if(NOT TARGET ${APP_NAME_LC}::${CMAKE_FIND_PACKAGE_NAME})
       add_library(BoringSSL::SSL UNKNOWN IMPORTED)
       set_target_properties(BoringSSL::SSL PROPERTIES
         INTERFACE_INCLUDE_DIRECTORIES "${PC_BORINGSSL_INCLUDE_DIRS}"
-        IMPORTED_LOCATION "${PC_BORINGSSL_LIBRARIES}" # İlk kütüphane genelde ssl'dir
+        IMPORTED_LOCATION "${DEPENDS_PATH}/boringssl/lib/libssl.a"
         INTERFACE_LINK_LIBRARIES "BoringSSL::Crypto"
       )
     endif()
@@ -37,6 +37,9 @@ if(NOT TARGET ${APP_NAME_LC}::${CMAKE_FIND_PACKAGE_NAME})
         IMPORTED_LOCATION "${DEPENDS_PATH}/boringssl/lib/libcrypto.a"
       )
     endif()
+
+    set(BORINGSSL_SSL_LIBRARY "${DEPENDS_PATH}/boringssl/lib/libssl.a")
+    set(BORINGSSL_CRYPTO_LIBRARY "${DEPENDS_PATH}/boringssl/lib/libcrypto.a")
 
     # 5. Senin meşhur "Alias" işlemini yapalım
     add_library(${APP_NAME_LC}::${CMAKE_FIND_PACKAGE_NAME} ALIAS BoringSSL::SSL)

@@ -12,9 +12,8 @@ if(NOT TARGET NGHttp3::NGHttp3)
   if(PKG_CONFIG_FOUND AND NOT (WIN32 OR WINDOWSSTORE))
     pkg_check_modules(NGHTTP3 libnghttp3 QUIET)
 
-    # First item is the full path of the library file found
-    # pkg_check_modules does not populate a variable of the found library explicitly
-    list(GET NGHTTP3_LINK_LIBRARIES 0 NGHTTP3_LIBRARY)
+    find_library(NGHTTP3_LIBRARY NAMES nghttp3_static nghttp3
+                                 HINTS ${NGHTTP3_LIBDIR})
 
     set(NGHTTP3_INCLUDE_DIR ${NGHTTP3_INCLUDEDIR})
   else()

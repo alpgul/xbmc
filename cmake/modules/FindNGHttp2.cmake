@@ -12,9 +12,8 @@ if(NOT TARGET NGHttp2::NGHttp2)
   if(PKG_CONFIG_FOUND AND NOT (WIN32 OR WINDOWSSTORE))
     pkg_check_modules(NGHTTP2 libnghttp2 QUIET)
 
-    # First item is the full path of the library file found
-    # pkg_check_modules does not populate a variable of the found library explicitly
-    list(GET NGHTTP2_LINK_LIBRARIES 0 NGHTTP2_LIBRARY)
+    find_library(NGHTTP2_LIBRARY NAMES nghttp2_static nghttp2
+                                 HINTS ${NGHTTP2_LIBDIR})
 
     set(NGHTTP2_INCLUDE_DIR ${NGHTTP2_INCLUDEDIR})
   else()

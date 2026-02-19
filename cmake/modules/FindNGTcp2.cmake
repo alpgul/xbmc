@@ -14,15 +14,10 @@ if(NOT TARGET NGTcp2::NGTcp2)
     pkg_check_modules(NGTCP2 libngtcp2 QUIET)
     pkg_check_modules(NGTCP2_CRYPTO_BORINGSSL libngtcp2_crypto_boringssl QUIET)
 
-    # First item is the full path of the library file found
-    # pkg_check_modules does not populate a variable of the found library explicitly
-    if(NGTCP2_LINK_LIBRARIES)
-      list(GET NGTCP2_LINK_LIBRARIES 0 NGTCP2_LIBRARY)
-    endif()
-
-    if(NGTCP2_CRYPTO_BORINGSSL_LINK_LIBRARIES)
-      list(GET NGTCP2_CRYPTO_BORINGSSL_LINK_LIBRARIES 0 NGTCP2_CRYPTO_LIBRARY)
-    endif()
+    find_library(NGTCP2_LIBRARY NAMES ngtcp2_static ngtcp2
+                                HINTS ${NGTCP2_LIBDIR})
+    find_library(NGTCP2_CRYPTO_LIBRARY NAMES ngtcp2_crypto_boringssl_static ngtcp2_crypto_boringssl
+                                       HINTS ${NGTCP2_CRYPTO_BORINGSSL_LIBDIR})
 
     set(NGTCP2_INCLUDE_DIR ${NGTCP2_INCLUDEDIR})
   else()
