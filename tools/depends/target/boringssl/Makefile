@@ -46,10 +46,10 @@ $(LIBDYLIB): $(PLATFORM)
 		echo "libdir=\$${exec_prefix}/lib"; \
 		echo "includedir=\$${prefix}/include"; \
 		echo ""; \
-		echo "Name: BoringSSL-Crypto"; \
-		echo "Description: BoringSSL crypto library with symbol prefixing"; \
+		echo "Name: libcrypto"; \
+		echo "Description: BoringSSL cryptography library"; \
 		echo "Version: 1.1.1"; \
-		echo "Libs: -L\$${libdir} \$${libdir}/libcrypto.a"; \
+		echo "Libs: -L\$${libdir} -lcrypto"; \
 		echo "Libs.private: -lz -ldl -pthread -latomic"; \
 		echo "Cflags: -I\$${includedir}"; \
 	) > $(PREFIX)/boringssl/lib/pkgconfig/libcrypto.pc
@@ -60,12 +60,11 @@ $(LIBDYLIB): $(PLATFORM)
 		echo "libdir=\$${exec_prefix}/lib"; \
 		echo "includedir=\$${prefix}/include"; \
 		echo ""; \
-		echo "Name: BoringSSL-SSL"; \
-		echo "Description: BoringSSL ssl library with symbol prefixing"; \
+		echo "Name: libssl"; \
+		echo "Description: BoringSSL Secure Sockets Layer"; \
 		echo "Version: 1.1.1"; \
 		echo "Requires: libcrypto"; \
-		echo "Libs: -L\$${libdir} \$${libdir}/libssl.a -lstdc++"; \
-		echo "Libs.private: -pthread"; \
+		echo "Libs: -L\$${libdir} -lssl"; \
 		echo "Cflags: -I\$${includedir}"; \
 	) > $(PREFIX)/boringssl/lib/pkgconfig/libssl.pc
 	# openssl.pc
@@ -76,9 +75,11 @@ $(LIBDYLIB): $(PLATFORM)
 		echo "includedir=\$${prefix}/include"; \
 		echo ""; \
 		echo "Name: OpenSSL"; \
-		echo "Description: OpenSSL library"; \
+		echo "Description: BoringSSL (OpenSSL compatible) - Secure Sockets Layer and cryptography libraries"; \
 		echo "Version: 1.1.1"; \
 		echo "Requires: libssl libcrypto"; \
+		echo "Libs: -L\$${libdir} -lssl -lcrypto"; \
+		echo "Cflags: -I\$${includedir}"; \
 	) > $(PREFIX)/boringssl/lib/pkgconfig/openssl.pc
 	touch $@
 

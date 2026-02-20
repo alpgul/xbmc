@@ -3,16 +3,19 @@ DEPS = ../../Makefile.include Makefile CURL-VERSION ../../download-files.include
                   01-apple-pkgconfig_disable_requires.patch \
                   02-boringssl-prefix-fix.patch \
                   03-name-fix.patch
-
+export LDFLAGS+= -pthread -lstdc++
 # configuration settings
 CONFIGURE=cp -f $(CONFIG_SUB) $(CONFIG_GUESS) .; \
            CPPFLAGS="$(CPPFLAGS) -DBORINGSSL_PREFIX=BSSL -include $(PREFIX)/boringssl/include/boringssl_prefix_symbols.h" \
           ./configure --prefix=$(PREFIX) \
+                      --enable-static \
                       --disable-shared \
                       --disable-ldap \
+                      --disable-ldaps \
                       --without-libssh2 \
                       --disable-ntlm-wb \
                       --enable-ipv6 \
+                      --enable-ech \
                       --without-librtmp \
                       --without-libidn2 \
                       --with-ca-fallback \

@@ -2,8 +2,9 @@ include ../../Makefile.include NGHTTP3-VERSION ../../download-files.include
 DEPS = ../../Makefile.include Makefile NGHTTP3-VERSION ../../download-files.include
 
 # configuration settings
-CMAKE_OPTIONS=-DENABLE_DEBUG=OFF \
-              -DENABLE_FAILMALLOC=OFF \
+CMAKE_OPTIONS=-DCMAKE_BUILD_TYPE=Release \
+              -DCMAKE_INSTALL_PREFIX=$(PREFIX) \
+              -DBUILD_TESTING=OFF \
               -DENABLE_LIB_ONLY=ON \
               -DENABLE_STATIC_LIB=ON \
               -DENABLE_SHARED_LIB=OFF \

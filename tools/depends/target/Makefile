@@ -153,7 +153,7 @@ $(DOWNLOAD_TARGETS):
 download: $(DOWNLOAD_TARGETS)
 
 crossguid: $(LIBUUID)
-curl: boringssl nghttp2 nghttp3 ngtcp2 $(ZLIB)
+curl: boringssl nghttp3 ngtcp2 nghttp2 $(ZLIB)
 dbus: expat
 ffmpeg: $(ICONV) $(ZLIB) bzip2 gnutls dav1d $(LIBVA)
 fontconfig: freetype2 expat $(ICONV) $(LIBUUID)
@@ -179,7 +179,9 @@ libzip: bzip2 gnutls $(ZLIB)
 mariadb: openssl $(ICONV) $(ZLIB)
 mesa: libdrm $(MESA_DEPS) $(ZLIB)
 nettle: gmp
+nghttp3: boringssl
 ngtcp2: boringssl nghttp3
+nghttp2: boringssl nghttp3 ngtcp2
 openssl: $(ZLIB)
 python3: expat gettext libxml2 sqlite3 openssl libffi bzip2 xz $(ICONV)
 pythonmodule-pil: bzip2 $(PYMODULE_DEPS) $(ZLIB) libjpeg-turbo libpng freetype2 python3 pythonmodule-setuptools

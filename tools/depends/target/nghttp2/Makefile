@@ -3,10 +3,12 @@ DEPS = ../../Makefile.include NGHTTP2-VERSION Makefile ../../download-files.incl
 
 # configuration settings
 CMAKE_OPTIONS=-DCMAKE_BUILD_TYPE=Release \
+              -DCMAKE_INSTALL_PREFIX=$(PREFIX) \
               -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
               -DBUILD_SHARED_LIBS=OFF \
               -DBUILD_STATIC_LIBS=ON \
               -DENABLE_DOC=OFF \
+              -DENABLE_HTTP3=OFF \
               -DENABLE_LIB_ONLY=ON
 
 LIBDYLIB=$(PLATFORM)/build/lib/$(BYPRODUCT)

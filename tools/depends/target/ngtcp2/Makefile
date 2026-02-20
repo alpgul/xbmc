@@ -4,16 +4,15 @@ DEPS = ../../Makefile.include Makefile NGTCP2-VERSION ../../download-files.inclu
 # Yeni izole yollarla güncellenmiş CMAKE_OPTIONS
 CMAKE_OPTIONS := -DCMAKE_INSTALL_PREFIX=$(PREFIX) \
                  -DCMAKE_BUILD_TYPE=Release \
+                 -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
                  -DENABLE_STATIC_LIB=ON \
                  -DENABLE_SHARED_LIB=OFF \
                  -DENABLE_LIB_ONLY=ON \
+                 -DBUILD_TESTING=OFF \
                  -DENABLE_OPENSSL=OFF \
                  -DENABLE_BORINGSSL=ON \
-                 -DOPENSSL_NO_OPTS=ON \
                  -DBORINGSSL_INCLUDE_DIR=$(PREFIX)/boringssl/include \
-                 -DBORINGSSL_LIBRARIES="$(PREFIX)/boringssl/lib/libssl.a;$(PREFIX)/boringssl/lib/libcrypto.a" \
-				 -DCMAKE_C_FLAGS="$(CFLAGS) -pthread -fPIC" \
-				 -DCMAKE_CXX_FLAGS="$(CXXFLAGS) -pthread -fPIC"
+                 -DBORINGSSL_LIBRARIES="-L$(PREFIX)/boringssl/lib -lssl -lcrypto -lstdc++"
 
 LIBDYLIB=$(PLATFORM)/build/lib/$(BYPRODUCT)
 
