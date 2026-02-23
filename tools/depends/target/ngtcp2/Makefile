@@ -1,6 +1,15 @@
 include ../../Makefile.include NGTCP2-VERSION ../../download-files.include
 DEPS = ../../Makefile.include Makefile NGTCP2-VERSION ../../download-files.include
 
+_LIBS=-lssl -lcrypto
+ifeq ($(OS),android)
+	_LIBS+=-lstdc++
+endif
+ifeq ($(OS),linux)
+	ifeq ($(TARGET_PLATFORM),webos)
+		_LIBS+=-lstdc++
+	endif
+endif
 # Yeni izole yollarla güncellenmiş CMAKE_OPTIONS
 CMAKE_OPTIONS := -DCMAKE_INSTALL_PREFIX=$(PREFIX) \
                  -DCMAKE_BUILD_TYPE=Release \
@@ -12,7 +21,7 @@ CMAKE_OPTIONS := -DCMAKE_INSTALL_PREFIX=$(PREFIX) \
                  -DENABLE_OPENSSL=OFF \
                  -DENABLE_BORINGSSL=ON \
                  -DBORINGSSL_INCLUDE_DIR=$(PREFIX)/boringssl/include \
-                 -DBORINGSSL_LIBRARIES="-L$(PREFIX)/boringssl/lib -lssl -lcrypto -lstdc++"
+                 -DBORINGSSL_LIBRARIES="-L$(PREFIX)/boringssl/lib $(_LIBS)"
 
 LIBDYLIB=$(PLATFORM)/build/lib/$(BYPRODUCT)
 

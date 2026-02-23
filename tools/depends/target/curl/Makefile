@@ -3,7 +3,16 @@ DEPS = ../../Makefile.include Makefile CURL-VERSION ../../download-files.include
                   01-apple-pkgconfig_disable_requires.patch \
                   02-boringssl-prefix-fix.patch \
                   03-name-fix.patch
-export LDFLAGS+= -pthread -lstdc++
+
+ifeq ($(OS),android)
+	export LDFLAGS+= -pthread -lstdc++
+endif
+ifeq ($(OS),linux)
+	ifeq ($(TARGET_PLATFORM),webos)
+		export LDFLAGS+= -pthread -lstdc++
+	endif
+endif
+
 # configuration settings
 CONFIGURE=cp -f $(CONFIG_SUB) $(CONFIG_GUESS) .; \
            CPPFLAGS="$(CPPFLAGS) -DBORINGSSL_PREFIX=BSSL -include $(PREFIX)/boringssl/include/boringssl_prefix_symbols.h" \
