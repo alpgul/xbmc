@@ -14,16 +14,16 @@
       "manifest": {
         "id": "org.xbmc.kodi",
         "title": "Kodi",
-        "version": "Omega",
+        "version": "Omega-HTTP3-20260224",
         "type": "native",
         "appDescription": null,
         "iconUri": "https://repo.webosbrew.org/apps/icons/org.xbmc.kodi.png",
         "sourceUrl": "https://github.com/xbmc/xbmc",
-        "ipkUrl": "https://github.com/alpgul/xbmc/releases/download/webos-Omega-20260206-222826/org.xbmc.kodi_21.3.0_arm.ipk",
+        "ipkUrl": "https://github.com/alpgul/xbmc/releases/download/webos-Omega-20260206-222826/org.xbmc.kodi_20260224-19134c59-omega-http3_arm.ipk",
         "ipkHash": {
-          "sha256": "d56b524faf0a6f10a468a0ebfe44d76f8e903fdcac452f45749dd6323eb5f67b"
+          "sha256": "0e9fa102bf79e88ea5b3d360a87835b6d7f5383fd4f5bef5b3dba9f3b0775f88"
         },
-        "ipkSize": 108166468,
+        "ipkSize": 86314334,
         "installedSize": 0
       },
       "pool": "main",
