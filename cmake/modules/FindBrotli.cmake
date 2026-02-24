@@ -19,7 +19,7 @@ if(NOT TARGET Brotli::Decoder)
     find_library(BROTLI_DECODER_LIBRARY NAMES brotlidec-static brotlidec
                                         HINTS ${BROTLI_DECODER_LIBDIR})
 
-    set(BROTLI_INCLUDE_DIR ${BROTLI_COMMON_INCLUDEDIR})
+    set(BROTLI_INCLUDE_DIR ${BROTLI_DECODER_INCLUDEDIR})
   else()
     find_path(BROTLI_INCLUDE_DIR NAMES brotli/decode.h
                                  HINTS ${DEPENDS_PATH}/include
@@ -34,8 +34,8 @@ if(NOT TARGET Brotli::Decoder)
 
   include(FindPackageHandleStandardArgs)
   find_package_handle_standard_args(Brotli
-                                    REQUIRED_VARS BROTLI_COMMON_LIBRARY BROTLI_DECODER_LIBRARY BROTLI_INCLUDE_DIR
-                                    VERSION_VAR BROTLI_COMMON_VERSION)
+                                    REQUIRED_VARS BROTLI_DECODER_LIBRARY BROTLI_COMMON_LIBRARY BROTLI_INCLUDE_DIR
+                                    VERSION_VAR BROTLI_DECODER_VERSION)
 
   if(Brotli_FOUND)
     add_library(Brotli::Common UNKNOWN IMPORTED)
