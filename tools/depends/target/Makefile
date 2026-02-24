@@ -49,7 +49,8 @@ DEPENDS = \
   sqlite3 \
   tinyxml \
   udfread \
-  xz
+  xz \
+  zstd
 
 ifeq ($(ENABLE_GPLV3),yes)
   DEPENDS+=samba-gplv3 libcdio-gplv3
@@ -153,7 +154,7 @@ $(DOWNLOAD_TARGETS):
 download: $(DOWNLOAD_TARGETS)
 
 crossguid: $(LIBUUID)
-curl: boringssl nghttp3 ngtcp2 nghttp2 $(ZLIB)
+curl: boringssl nghttp3 ngtcp2 nghttp2 $(ZLIB) zstd
 dbus: expat
 ffmpeg: $(ICONV) $(ZLIB) bzip2 gnutls dav1d $(LIBVA)
 fontconfig: freetype2 expat $(ICONV) $(LIBUUID)

@@ -32,7 +32,7 @@ CONFIGURE=cp -f $(CONFIG_SUB) $(CONFIG_GUESS) .; \
                       --with-nghttp2=$(PREFIX) \
                       --with-zlib \
                       --without-libpsl \
-                      --without-zstd \
+                      --with-zstd=$(PREFIX) \
                       --without-brotli \
                       --without-gssapi \
                       --without-gsasl \
