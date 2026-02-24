@@ -33,7 +33,7 @@ CONFIGURE=cp -f $(CONFIG_SUB) $(CONFIG_GUESS) .; \
                       --with-zlib \
                       --without-libpsl \
                       --with-zstd=$(PREFIX) \
-                      --without-brotli \
+                      --with-brotli=$(PREFIX) \
                       --without-gssapi \
                       --without-gsasl \
                       --without-hyper \

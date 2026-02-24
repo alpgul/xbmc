@@ -34,6 +34,7 @@ if(${CURL_LIBRARY} MATCHES ".+\.a$" AND PC_CURL_STATIC_LDFLAGS)
   set(CURL_LDFLAGS ${PC_CURL_STATIC_LDFLAGS})
 
   find_package(BoringSSL REQUIRED)
+  find_package(Brotli REQUIRED)
   find_package(NGHttp3 REQUIRED)
   find_package(NGHttp2 REQUIRED)
   find_package(NGTcp2 REQUIRED)
@@ -57,6 +58,8 @@ if(CURL_FOUND)
       ${NGTCP2_LIBRARY}
       ${BORINGSSL_SSL_LIBRARY}
       ${BORINGSSL_CRYPTO_LIBRARY}
+      ${BROTLI_DECODER_LIBRARY}
+      ${BROTLI_COMMON_LIBRARY}
       ${ZSTD_LIBRARY})
   endif()
 
@@ -68,7 +71,7 @@ if(CURL_FOUND)
 
     if(CURL_LIB_TYPE STREQUAL "STATIC")
       set_target_properties(Curl::Curl PROPERTIES
-                                       INTERFACE_LINK_LIBRARIES "NGHttp2::NGHttp2;NGHttp3::NGHttp3;NGTcp2::NGTcp2CryptoBoringSSL;BoringSSL::SSL;BoringSSL::Crypto;Zstd::Zstd")
+                                       INTERFACE_LINK_LIBRARIES "NGHttp2::NGHttp2;NGHttp3::NGHttp3;NGTcp2::NGTcp2CryptoBoringSSL;BoringSSL::SSL;BoringSSL::Crypto;Zstd::Zstd;Brotli::Common;Brotli::Decoder")
     endif()
 
     if(HAS_CURL_STATIC)

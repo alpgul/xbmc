@@ -7,6 +7,7 @@ endif
 # Keep in alphabetical order
 DEPENDS = \
   boringssl \
+  brotli \
   bzip2 \
   curl \
   dav1d \
@@ -154,7 +155,7 @@ $(DOWNLOAD_TARGETS):
 download: $(DOWNLOAD_TARGETS)
 
 crossguid: $(LIBUUID)
-curl: boringssl nghttp3 ngtcp2 nghttp2 $(ZLIB) zstd
+curl: boringssl brotli nghttp3 ngtcp2 nghttp2 $(ZLIB) zstd
 dbus: expat
 ffmpeg: $(ICONV) $(ZLIB) bzip2 gnutls dav1d $(LIBVA)
 fontconfig: freetype2 expat $(ICONV) $(LIBUUID)
